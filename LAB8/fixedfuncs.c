@@ -110,3 +110,37 @@ void printS( long int num, long int frac_bits )
 }
 
 
+void printSd( long int num, long int frac_bits, long int show)
+{ 
+  //Typecast on 1 is required so that upper 32 bits of an x register are not zeroed out
+  unsigned long int mask = ((long)1 << frac_bits) - (long)1;
+  unsigned long int fracpart;
+  int ct = 0;
+  //num = num >> show;
+  //num = num << show;
+  if(num < 0)
+    {
+      printf("-");
+      num = -num;
+    }
+  /* Print the integer part (with the sign, if it is negative) */
+  printf("%d.",num>>frac_bits);
+  /* Remove the integer part and keep the fraction part */
+  fracpart = num & mask;
+  /* Print all of the digits in the fraction part . The post -
+     test loop ensures that the first digit is printed , even if
+     it is zero. */
+  do 
+  {
+    /* Remember that multiplying by the constant ten can be done
+       using a shift followed by an add with operand2 shifted ,
+       or the other way around ... two instructions on the ARM
+       processor. That is much faster than a mul instruction. */
+    fracpart *= 10;
+    printf ("%u", fracpart >> frac_bits);
+    fracpart &= mask ;
+    ct += 1;
+  } while (ct < show);//(fracpart != 0);
+}
+
+

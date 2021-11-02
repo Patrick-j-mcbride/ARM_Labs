@@ -199,7 +199,9 @@ rw:
 
             mov     x0, x21     // move current x to x0
             mov     x1, #32
-            bl      printS      // print current x
+            //bl      printS      // print current x
+            mov     x2, #4
+            bl      printSd
 
             ldr     x0, =i3
             bl      printf      // print whitespace
@@ -209,7 +211,9 @@ rw:
             bl      fofx        // x0 is f(x) as S(31,32) 
 
             mov     x1, #32
-            bl      printS      // print f(x)
+            //bl      printS      // print f(x)
+            mov     x2, #4
+            bl      printSd
 
             ldr     x0, =nl     
             bl      printf      // print newline
