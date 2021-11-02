@@ -47,65 +47,36 @@ fofx:
 
             asr     x0, x23, #16            // x-2 in x0 as S(47,16)
             asr     x1, x23, #16            // x-2 in x1 as S(47,16)
-            smull   x0, x0, x1              // (x-2)^2 in x0 as S(31,32)
+            smull   x0, w0, w1              // (x-2)^2 in x0 as S(31,32)
 
             asr     x0, x0, #16             // (x-2)^2 in x0 as S(47,16)
-            smull   x0, x0, x1              // (x-2)^3 in x0 as S(31,32)
+            smull   x0, w0, w1              // (x-2)^3 in x0 as S(31,32)
             asr     x0, x0, #16             // (x-2)^3 in x0 as S(47,16)
-            smull   x24, x0, x1             // (x-2)^4 in x24 as S(31,32)
+            smull   x24, w0, w1             // (x-2)^4 in x24 as S(31,32)
 
             asr     x0, x22, #16            // x-1 in x0 as S(47,16)
             asr     x1, x23, #16            // x-2 in x1 as S(47,16)
-            smull   x25, x0, x1             // (x-2)(x-1) in x25 as S(31,32)
+            smull   x25, w0, w1             // (x-2)(x-1) in x25 as S(31,32)
 
             mov     x0, #33
             lsl     x0, x0, #32             // 33 in x0 as S(31,32)
 
             add     x26, x24, x0            // (x-2)^4 + 33 in x26 as S(31,32)
 
-            
-
-            
-
-            sub     x23, x21, x1 // x23 is (x-2)
-
-            mov     x1, #1
-            lsl     x1, x1, #32 // x1 is 1.0
-
-            add     x22, x21, x1 // x22 is (x+1)
-
-            asr     x0, x0, #16
-            asr     x1, x21, #16
-            smull   x0, w21, w0
-            mov     x1, x0
-
-            asr     x0, x0, #16
-            asr     x1, x1, #16
-            smull   x24, w0, w1 // x24 is (x-2)^4
-
-            asr     x0, x22, #16
-            asr     x1, x23, #16
-            smull     x22, w0, w1// x22 is (x-2)*(x+1))
-
-            mov     x0, #33
-            lsl     x0, x0, #32
-
-            add     x1, x24, x0 // x0 is (x-2)^4 + 33
-            lsl     x0, x22, #32
-            asr     x1, x1, #16
-            sdiv    x0, x0, x1 //bl      divide // x0 is ((x-2)*(x+1))/((x-2)^4 + 33)
+            mov     x0, #11                 // x0 is 11 as U(64)
             lsl     x0, x0, #16
-            mov     x24, x0
+            asr     x1, x21, #16
+            smull   x24, w1, w0            // x24 is 11x as S(31,32)
 
-            mov     x1, #11
-            lsl     x1, x1, #16
-            asr     x0, x21, #16
-            smull     x0, w1, w21
+            asr     x0, x24, #16
+            asr     x1, x25, #16
 
-            asr     x0, x0, #16
-            asr     x1, x24, #16 
+            smull   x0, w0, w1            // x0 is S(31,32)
 
-            smull     x0, w0, w1
+            asr     x1, x26, #16
+
+            sdiv    x0, x0, x1              // x0 is S(47,16)
+            lsl     x0, x0, #16
 
             ldp     x21, x22, [sp], #16
             ldp     x23, x24, [sp], #16
@@ -219,7 +190,8 @@ main:
             // (hi-lo)/rows in x25 S(31,32)
 
             mov     x28, xzr 
-            // increment starting at 0 in x28               
+            // increment starting at 0 in x28    
+
 
 rw:
             cmp     w28, w24    // compare itr to rows
