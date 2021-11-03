@@ -195,7 +195,7 @@ main:
 
 rw:
             cmp     w28, w24    // compare itr to rows
-            bge     dd          // branch if itr >= rows
+            bgt     dd          // branch if itr >= rows
 
             mov     x0, x21     // move current x to x0
             mov     x1, #32
