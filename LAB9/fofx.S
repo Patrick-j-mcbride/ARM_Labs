@@ -130,7 +130,7 @@ top:
 
 done:
             mov     x0, xzr
-            stp     x25, x26, [sp, #-16]!
+            ldp     x25, x26, [sp], #16
             ldp     x27, x28, [sp], #16
             ldp     x29, x30, [sp], #16
             ret
