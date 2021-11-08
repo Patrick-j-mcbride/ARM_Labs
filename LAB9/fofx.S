@@ -3,6 +3,7 @@
 xLow:       .quad   1
 xHigh:      .quad   2
 rows:       .quad   3 
+move:       .quad   3 
 o1:         .asciz  "\nThis program will create a table for f(x) = (x^3 -x^2 -2x)/( ( (x-2)^4 )/11 ) + 3)\n\nEnter the lowest value of x: "
             .align  2
 i1:         .asciz  "%lf"
@@ -97,34 +98,39 @@ getPut:
 main:
             stp     x29, x30, [sp, #-16]!
             stp     x27, x28, [sp, #-16]!
+            stp     x25, x26, [sp, #-16]!
 
-            bl      getPut      // returns num rows in x0
+            bl      getPut      // returns num rows in x0, inc in d0, xLow
 
             mov     x28, x0
 
-            fmov    d3, d0     // move
+            fmov    x25, d0     // move
+            fmov    x26, d1     // xLow
 
 top:
             cmp     w28, wzr    // compare itr 0
             blt     done        // branch if itr < 0
 
-            fmov    d0, d1
+            fmov    d0, x26
             ldr     x0, =i2
             bl      printf      // print x
 
-            fmov    d0, d1      // move x into d0
-            bl      fx          // calculate f(x+move)
-
+            fmov    d0, x26     // move x into d0
+            bl      fx          // calculate f(x)
             ldr     x0, =i3     
             bl      printf      // print f(x)
 
-            fadd    d1, d1, d3  // add move to x
+            fmov    d1, x26
+            fmov    d2, x25
+            fadd    d0, d1, d2  // add move to x
+            fmov    x26, d0
 
             sub     w28, w28, #1  // itr--
             b       top
 
 done:
             mov     x0, xzr
+            stp     x25, x26, [sp, #-16]!
             ldp     x27, x28, [sp], #16
             ldp     x29, x30, [sp], #16
             ret
