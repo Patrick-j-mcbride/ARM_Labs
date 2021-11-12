@@ -9,7 +9,7 @@ bigint_adc:
         mov     x22, xzr  
         mov     x23, xzr
         mov     v3.2d[0], x2                         // move carry into v register            
-
+        mov     v3.2d[1], xzr
 
         ldr     x25, [x0]                      // load pointer to left blks
         ldr     w23, [x0, #8]                  // load left size 
@@ -43,10 +43,10 @@ bulk:
         cmp     w22, #2
         blt     lol 
         beq     oneMore
-        ldp     v1.d2[0], v1.d2[1], [x25], #16    // load 2 chunks 
-        ldp     v2.d2[0], v2.d2[1], [x21], #16    // load 2 chunks 
+        ldr     Q1, [x25], #16    // load 2 chunks 
+        ldR     Q2, [x21], #16    // load 2 chunks 
         sub     w22, w22, #2                    // decrement itr by 2
-        add     v0, v1.d2[0], v2.d2[0]            // add l to r 
+        add     Q0, d1, d2            // add l to r 
         add     d0, d0, d3                      // add carry 
         mov     d4, d0                          // move chunk
         mov     d3, v0.d2[1]                     // move carry
