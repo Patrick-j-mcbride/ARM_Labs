@@ -48,6 +48,7 @@ typedef uint64_t bigchunk;
 struct bigint_struct {
   chunk *blks;        /* pointer to array of bit chunks */
   int size;           /* number of chunks in the array  */
+  int realSize;
 };
 
 /* Private function prototypes */
@@ -207,6 +208,7 @@ void bigint_free(bigint b) {
 
 /* this is the internal add function.  It includes a    */
 /* carry. Several other functions use it.               */
+#ifndef USE_ASM
 static bigint bigint_adc(bigint l, bigint r, chunk carry) {
   bigint sum, tmpl, tmpr;
   int i, nchunks;
@@ -233,6 +235,7 @@ static bigint bigint_adc(bigint l, bigint r, chunk carry) {
   bigint_free(sum);
   return tmpl;
 }
+#endif
 
 /* The add function calls adc to perform an add with    */
 /* initial carry of zero                                */
@@ -640,6 +643,7 @@ bigint bigint_alloc(int chunks) {
     exit(1);
   }
   r->size = chunks;
+  r->realSize = chunks;
   r->blks = (chunk*) malloc(chunks * sizeof(chunk));
   if (r->blks == NULL) {
     perror("bigint_alloc");

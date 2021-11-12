@@ -1,5 +1,3 @@
-
-
 # "make" and "make test" are the same thing: build the bigint library
 #        and the regression test program
 
@@ -14,8 +12,8 @@
 
 # CHANGE THE FOLLOWING TWO LINES TO YOUR FIRST AND LAST NAME.
 
-FIRST_NAME=Program_1
-LAST_NAME=CENG320
+FIRST_NAME=patrick
+LAST_NAME=mcbride
 
 # You can add more assembly files as you go.  Just edit the C code and
 # put #ifdef around the function you want to change to assembly (look
@@ -30,7 +28,7 @@ COBJS = bigint.o
 #ASMOBJS =
 #DEFINES = -DSIXTYFOUR_BIT
 
-ASMOBJS = bigint_negate.o 
+ASMOBJS = bigint_negate.o bigint_adc.o
 DEFINES = -DUSE_ASM -DSIXTYFOUR_BIT
 
 #ASMOBJS = bigint_negate.o bigint_add.o

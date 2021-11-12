@@ -6,7 +6,8 @@ make
 
 # You will need to change BASETIME if you are not using a Raspberry Pi 2.
 # BASETIME is the total time reported by the original C version.
-BASETIME=19.828311
+BASETIME=4.634146
+#19.828311 original time
 
 TIME=`./regression | grep "Total time" | cut -f 2 -d ':'`
 
