@@ -3,18 +3,21 @@
         .global bigint_adc
 bigint_adc:
         stp     x29, x30, [sp, #-16]!           // Save FP & Link Register x30    
+        stp     x26, x27, [sp, #-16]!
         stp     x24, x25, [sp, #-16]!
-        stp     x22, x23, [sp, #-16]!     
+        mov     x26, xzr
+        stp     x22, x23, [sp, #-16]! 
+        mov     x27, xzr    
         stp     x20, x21, [sp, #-16]!
-        mov     x22, xzr  
-        mov     x23, xzr
-        mov     v3.2d[0], x2                         // move carry into v register            
-        mov     v3.2d[1], xzr
+        mov     w26, w2  
+        
 
-        ldr     x25, [x0]                      // load pointer to left blks
+        ldr     x25, [x0]   
+        mov     x23, xzr                   // load pointer to left blks
         ldr     w23, [x0, #8]                  // load left size 
 
-        ldr     x21, [x1]                      // load pointer to right blks
+        ldr     x21, [x1] 
+        mov     x22, xzr                     // load pointer to right blks
         ldr     w22, [x1, #8]                  // load right size 
 
         cmp     w23, w22
@@ -36,37 +39,34 @@ Nx:
         mov     x0, x23
         add     X0, x0, #1
         
-        bl bigint_alloc
+        bl      bigint_alloc
         mov     x1, x0
         sub     x23, x23, x22
 bulk:     
         cmp     w22, #2
         blt     lol 
         beq     oneMore
-        ldr     Q1, [x25], #16    // load 2 chunks 
-        ldR     Q2, [x21], #16    // load 2 chunks 
-        sub     w22, w22, #2                    // decrement itr by 2
-        add     Q0, d1, d2            // add l to r 
-        add     d0, d0, d3                      // add carry 
-        mov     d4, d0                          // move chunk
-        mov     d3, v0.d2[1]                     // move carry
-        add     v0, v1.d2[1], v2.d2[1]            // add l to r 
-        add     d0, d0, d3                      // add carry 
-        mov     v4.d2[1], d0                      // move chunk
-        stp     v4.d2[0], v4.d2[1], [x0], #16     // store 2 computed chunks
-        mov     d3, v0.d2[1]                     // move carry
+
+        ldp     x5, x6, [x25], #16    // load 2 chunks 
+        ldp     x3, x4, [x21], #16    // load 2 chunks 
+        sub     w22, w22, #2          // decrement itr by 2
+        adds    x2, x26, 0xFFFFFFFFFFFFFFFF 
+        adcs    x5, x5, x3            // add l to r
+        adcs    x6, x6, x4            // add l to r
+        adc     x26, x27, xzr 
+        stp     x5, x6, [x0], #16    // load 2 chunks 
+
         b       bulk
 oneMore:
-        ldr     d1, [x25], #8                   // load 1 chunk
-        ldr     d2, [x21], #8                   // load 1 chunk
-        add     v0, d1, d2                      // add l to r 
-        add     d0, d0, d3                      // add carry 
-        str     d0, [x0], #8                    // store chunk
-        mov     d3, v0.d2[1]                     // move carry
+        ldr     x5, [x25], #8                   // load 1 chunk
+        ldr     x3, [x21], #8                   // load 1 chunk
+        adds    x2, x26, 0xFFFFFFFFFFFFFFFF 
+        adcs    x5, x5, x3                      // add l to r
+        adc     x26, x27, xzr 
+        str     x5, [x0], #8                   
 lol:   
-        ldr     x4, [x21]
-        asr     x4, x4, #63
-        mov     d2, x4
+        ldr     x3, [x21]
+        asr     x3, x3, #63
         cmp     x23, xzr 
         beq     ll     
 
@@ -74,40 +74,36 @@ fll:
         cmp     w23, #2
         blt     ll
         beq     om
-        ldp     v1.d2[0], v1.d2[1], [x25], #16    // load 2 chunks
-        sub     w23, w23, #2
 
-        add     v0, v1.d2[0], d2                 // add l to r 
-        add     d0, d0, d3                      // add carry 
-        mov     d4, d0                          // move chunk
-        mov     d3, v0.d2[1]                     // move carry
-        add     v0, v1.d2[1], d2                 // add l to r 
-        add     d0, d0, d3                      // add carry 
-        mov     v4.d2[1], d0                      // move chunk
-        stp     v4.d2[0], v4.d2[1], [x0], #16     // store 2 computed chunks
-        mov     d3, v0.d2[1]                     // move carry
+        ldp     x5, x6, [x25], #16    // load 2 chunks 
+        sub     w23, w23, #2          // decrement itr by 2
+        adds    x2, x26, 0xFFFFFFFFFFFFFFFF 
+        adcs    x5, x5, x3            // add l to r
+        adcs    x6, x6, x3            // add l to r
+        adc     x26, x27, xzr 
+        stp     x5, x6, [x0], #16    
+                   
         b       fll
+
 om:
-        ldr     d1, [x25], #8                   // load 1 chunk
-        add     v0, d1, d2                      // add l to r 
-        add     d0, d0, d3                      // add carry 
-        str     d0, [x0], #8                    // store chunk
-        mov     d3, v0.d2[1]                     // move carry
+        ldr     x5, [x25], #8                   // load 1 chunk
+        adds    x2, x26, #0xFFFFFFFFFFFFFFFF 
+        adcs    x5, x5, x3                      // add l to r
+        adc     x26, x27, xzr 
+        str     x5, [x0], #8  
 
 ll: 
         ldr     x5, [x25]
         asr     x5, x5, #63
-        mov     x6, d3
-        add     x4, x4, x5 
-        add     x4, x4, x6 
-        asr     x5, x4, #1
-        cmp     x4, x5 
-        str     x4, [x0]
+        adds    x2, x26, #0xFFFFFFFFFFFFFFFF 
+        adc     x5, x5, x3                      // add l to r
+        str     x5, [x0], #8                   
 
         mov     x0, x1
 
         ldp     x20, x21, [sp], #16
         ldp     x22, x23, [sp], #16
         ldp     x24, x25, [sp], #16
+        ldp     x26, x27, [sp], #16
         ldp     x29, x30, [sp], #16             // Restore FP & LR
         ret
