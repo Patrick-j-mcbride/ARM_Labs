@@ -44,32 +44,30 @@ oloop:
 		mov 	x2, xzr// 0 iloop itr
 //===========================================================
 iloop:
-		mov 	x7, xzr
-		mov 	x8, xzr
-		mov 	x9, xzr
+		mov 	x7, #54
+		mov 	x8, #184
+		mov 	x9, #18
 		
-		ldr 	x5, m4
-		mul		x5, x5, x2
-		ldrb	w7, [x11, x5]
-		add		x5, x5, #1
-		ldrb	w8, [x11, x5]
-		add		x5, x5, #2
-		ldrb	w9, [x11, x5]
+        mov     v0.d[0], xzr
+        mov     v1.d[0], xzr
+        mov     v2.d[0], xzr
+        mov     v3.d[0], xzr  
 
-		ldr 	x6, m1
-		mul 	x7, x7, x6
-		ldr 	x6, m2
-		mul 	x8, x8, x6
-		ldr 	x6, m3
-		mul 	x9, x9, x6
+        ld3     {v1.b, v2.b, v3.b} [0], [x11], #3
+        mov     v4.2d[0], x7
+        mul     v1.2s, v1.2s, v4.2s
+        mov     v4.2d[0], x8
+        mul     v2.2s, v2.2s, v4.2s
+        mov     v4.2d[0], x9
+        mul     v3.2s, v3.2s, v4.2s
 
-		add		x4, x7, x8
-		add		x4, x4, x9
-		lsr		x4, x4, #8 
+        add     d0, d1, d2
+        add     d0, d0, d3
 
-		//mov		x4, x7
+        ushr    d0, d0, #8
 
-		strb	w4, [x15, x2] // store in col
+        umov     w4, v0.b[0]
+        strb	w4, [x15], #1 // store in col
 		add 	w2, w2, #1// move iloop itr
 		cmp 	x2, x13// iloop comp
 		bne		iloop// iloop
