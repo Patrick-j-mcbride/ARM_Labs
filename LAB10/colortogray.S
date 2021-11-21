@@ -4,7 +4,6 @@
    The C prototype is:
 
    grayimage *color_to_gray(rgbimage *image);
-
 */
 		.data 
 		.equ 		img, 0

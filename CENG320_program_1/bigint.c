@@ -6,7 +6,8 @@
 #include <ctype.h>
 #include <stdint.h>
 
-/* A big integer is an array of "chunks" of bits.  The following
+/* 
+  A big integer is an array of "chunks" of bits.  The following
   section defines the chunk, and defines a bigchunk to have twice as
   many bits as a chunk. It also defines a mask that can be used to
   select bits out of a bigchunk.  When compiling this code, you can
@@ -14,6 +15,7 @@
   SIXTYFOUR_BIT.  If none of those are defined, then the chunk size
   is THIRTYTWO_BIT.
 */
+
 #ifdef EIGHT_BIT
 typedef uint8_t chunk;
 typedef int8_t schunk;
@@ -48,7 +50,6 @@ typedef uint64_t bigchunk;
 struct bigint_struct {
   chunk *blks;        /* pointer to array of bit chunks */
   int size;           /* number of chunks in the array  */
-  int realSize;
 };
 
 /* Private function prototypes */
@@ -643,7 +644,6 @@ bigint bigint_alloc(int chunks) {
     exit(1);
   }
   r->size = chunks;
-  r->realSize = chunks;
   r->blks = (chunk*) malloc(chunks * sizeof(chunk));
   if (r->blks == NULL) {
     perror("bigint_alloc");

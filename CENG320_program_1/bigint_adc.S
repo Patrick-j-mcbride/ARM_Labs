@@ -14,11 +14,11 @@ bigint_adc:
 
         ldr     x25, [x0]   
         mov     x23, xzr                   // load pointer to left blks
-        ldr     w23, [x0, #8]                  // load left size 
+        ldr     w23, [x0, #8]              // load left size 
 
         ldr     x21, [x1] 
-        mov     x22, xzr                     // load pointer to right blks
-        ldr     w22, [x1, #8]                  // load right size 
+        mov     x22, xzr                    // load pointer to right blks
+        ldr     w22, [x1, #8]               // load right size 
 
         cmp     w23, w22
         blt     Lhi          
@@ -100,6 +100,7 @@ ll:
         str     x5, [x0], #8                   
 
         mov     x0, x1
+        bl      bigint_trim
 
         ldp     x20, x21, [sp], #16
         ldp     x22, x23, [sp], #16
